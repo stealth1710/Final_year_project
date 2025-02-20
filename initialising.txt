@@ -1,0 +1,23 @@
+front end initialisation
+npm create vite@latest . --template react
+then,npm install
+npm install -D tailwindcss@3
+npx tailwindcss init
+
+replace the config file with 
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+replace the index.css file
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

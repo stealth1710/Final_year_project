@@ -1,5 +1,4 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 from pymongo import MongoClient
 import os
@@ -52,7 +51,7 @@ def scrape_website(driver, query, target_name, website):
         products = soup.find_all("div", class_="product-tile")
 
         if not products:
-            print(f"❌ No product tiles found for {target_name} on {website['source_name']}.")
+            print(f" No product tiles found for {target_name} on {website['source_name']}.")
             return
 
         for product in products:
@@ -66,7 +65,7 @@ def scrape_website(driver, query, target_name, website):
 
             # Check if the product name matches the target name
             if target_name.lower() in name.lower():
-                print(f"✅ Found match on {website['source_name']}: {name} - {price}")
+                print(f" Found match on {website['source_name']}: {name} - {price}")
 
                 # Save to MongoDB
                 product_data = {
@@ -76,13 +75,13 @@ def scrape_website(driver, query, target_name, website):
                     "updated_at": datetime.utcnow().strftime("%d-%m-%y"),
                 }
                 result = collection.insert_one(product_data)
-                print(f"📌 Inserted into MongoDB: {result.inserted_id}")
+                print(f" Inserted into MongoDB: {result.inserted_id}")
                 break  # Stop after finding the first matching product
         else:
-            print(f"❌ No exact match found for {target_name} on {website['source_name']}")
+            print(f" No exact match found for {target_name} on {website['source_name']}")
 
     except Exception as e:
-        print(f"🚨 Error scraping {target_name} from {website['source_name']}: {e}")
+        print(f" Error scraping {target_name} from {website['source_name']}: {e}")
 
 
 if __name__ == "__main__":
@@ -95,4 +94,4 @@ if __name__ == "__main__":
 
     # Close the WebDriver
     driver.quit()
-    print("✅ Scraping complete!")
+    print(" Scraping complete!")

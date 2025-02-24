@@ -432,7 +432,7 @@ WEBSITES = [
         "price_selector": "span[data-test='fop-price']",
         "name_selector": "h3._text_16wi0_1._text--m_16wi0_23",  # ✅ Main name
         "hidden_label_selector": None,  # ✅ No hidden label in Morrisons
-        "extra_info_selector": "span._text_16wi0_1._text--m_16wi0_23.sc-1sjeki5-0.asqfi"  # ✅ Extra details like "4 x 41.7g"
+        "extra_info_selector": "span._text_16wi0_1._text--m_16wi0_23.sc-1sjeki5-0.asqfi"  # Extra details like "4 x 41.7g"
     }
 ]
 

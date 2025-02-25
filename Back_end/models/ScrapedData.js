@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
 const scrapedDataSchema = new mongoose.Schema({
-  product_name: { type: String, required: true }, // Name of the product
-  source: { type: String, required: true },       // Website/source of the data
-  price: { type: String, required: true },        // Price of the product
-  scraped_at: { type: Date, default: Date.now },  // Timestamp of when the data was scraped
+  product_name: { type: String, required: true },
+  source: { type: String, required: true },
+  price: { type: String, required: true },
+  updated_at: { type: String, required: true },
 });
 
-// Create the model
-const ScrapedData = mongoose.model("ScrapedData", scrapedDataSchema);
+
+const ScrapedData = mongoose.model("ScrapedData", scrapedDataSchema, "scraped_prices");
 
 module.exports = ScrapedData;

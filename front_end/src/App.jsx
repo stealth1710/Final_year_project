@@ -5,6 +5,7 @@ import NotFound from "./pages/NotFound";
 import SignUp from "./pages/SignUp";
 import AdminPanel from "./pages/AdminPanel";
 import AdminOrders from "./pages/AdminOrders"; // Import Admin Orders Page
+import AdminScrapedPrices from "./pages/AdminScrapedPrices"; // ✅ Import Scraped Prices Page
 import SignIn from "./pages/SignIn";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Cart from "./pages/Cart";
@@ -55,6 +56,16 @@ const App = () => {
           element={
             <ProtectedRoute isAdminRoute={true}>
               <AdminOrders />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ✅ Admin Scraped Prices Route */}
+        <Route
+          path="/admin/scraped-prices"
+          element={
+            <ProtectedRoute isAdminRoute={true}>
+              <AdminScrapedPrices />
             </ProtectedRoute>
           }
         />

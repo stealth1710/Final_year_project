@@ -8,6 +8,7 @@ const userRoutes = require("./Routes/userRoutes");
 const adminRoutes = require("./Routes/adminRoutes");
 const scrapeRoutes = require("./Routes/scrapeRoutes");
 const orderRoutes = require("./Routes/orderRoutes"); // Added Order Routes
+const scrapeDataRoutes = require("./Routes/scrapedPrices");
 
 const app = express();
 app.use(cors());
@@ -25,6 +26,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/scraped-data", scrapeRoutes);
 app.use("/api/orders", orderRoutes); // ✅ Added Order Routes
+app.use("/api/scraped-products", scrapeDataRoutes);
 
 // Default Route
 app.get("/", (req, res) => {

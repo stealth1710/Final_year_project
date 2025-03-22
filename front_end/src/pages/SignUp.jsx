@@ -1,22 +1,75 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
+
   const [message, setMessage] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [errorMessages, setErrorMessages] = useState([]);
+  const [formError, setFormError] = useState(false);
+
+  // New state for individual field errors
+  const [fieldErrors, setFieldErrors] = useState({
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+  });
 
   const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // Update form data
     setFormData({ ...formData, [name]: value });
-  };
 
+    // Clear overall errors if any
+    if (errorMessages.length > 0 || fieldErrors[name]) {
+      setErrorMessages([]);
+      setFieldErrors({ ...fieldErrors, [name]: false });
+      setFormError(false);
+    }
+  };
+  
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Recalculate field errors on submit
+    const newFieldErrors = {
+      name: formData.name.trim() === "",
+      email: formData.email.trim() === "",
+      password: formData.password.trim() === "",
+      confirmPassword:
+        formData.confirmPassword.trim() === "" ||
+        formData.confirmPassword !== formData.password,
+    };
+
+    setFieldErrors(newFieldErrors);
+
+    // Build an array of error messages based on current form data
+    const errors = [];
+    if (newFieldErrors.name) errors.push("Please enter your name.");
+    if (newFieldErrors.email) errors.push("Please provide a valid email.");
+    if (newFieldErrors.password) errors.push("Please enter a password.");
+    if (newFieldErrors.confirmPassword) errors.push("Passwords do not match.");
+
+    if (errors.length > 0) {
+      setErrorMessages(errors);
+      setFormError(true);
+      return;
+    }
+
+    setErrorMessages([]);
+    setFormError(false);
+
     try {
       const response = await fetch(`${API_BASE_URL}/users/signup`, {
         method: "POST",
@@ -31,44 +84,109 @@ const SignUp = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold text-center mb-4">Sign Up</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="max-w-sm mx-auto bg-white shadow-md p-6 rounded-md"
-      >
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Name"
-          className="w-full px-3 py-2 mb-4 border rounded-md"
-        />
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email"
-          className="w-full px-3 py-2 mb-4 border rounded-md"
-        />
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-          className="w-full px-3 py-2 mb-4 border rounded-md"
-        />
-        <button
-          type="submit"
-          className="w-full bg-[#11454A] text-white py-2 rounded-md"
+    <div className="flex items-center justify-center min-h-screen bg-[#11454A] px-4">
+      <div className="flex w-full max-w-4xl items-center justify-between">
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-white text-4xl font-bold italic font-[Inter] flex space-x-0.5"
         >
-          Sign Up
-        </button>
-      </form>
-      {message && <p className="text-center mt-4">{message}</p>}
+          {"Retail Connect.".split("").map((char, index) => (
+            <motion.span
+              key={index}
+              whileHover={{ scale: 1.5 }}
+              transition={{ duration: 0.2 }}
+              className="inline-block cursor-pointer"
+            >
+              {char}
+            </motion.span>
+          ))}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md shadow-lg rounded-xl p-8 bg-[#AEF3E6]"
+        >
+          <h1 className="text-3xl font-bold text-center text-[#11454A] mb-6">Sign Up</h1>
+
+          {errorMessages.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="bg-red-100 text-red-600 p-3 rounded-md text-center mb-4"
+            >
+              {errorMessages.map((msg, index) => (
+                <motion.p
+                  key={index}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity:1 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  {msg}
+                </motion.p>
+              ))}
+            </motion.div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {["name", "email", "password", "confirmPassword"].map((field, idx) => (
+              <div key={idx} className="relative">
+                <motion.input
+                  whileFocus={{ scale: 1.05 }}
+                  type={field.includes("password") ? "password" : "text"}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  placeholder=" "
+                  className={`w-full px-4 py-3 border border-gray-300 rounded-md ${fieldErrors[field] && formError ? "bg-red-500" : "bg-[#11454A]"} text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-[#11454A] peer`}
+                />
+                <label className={`absolute transition-all duration-300 ease-in-out text-white ${
+  formData[field] ? 'right-4 top-0 text-xs' : 'left-4 top-3 text-base'
+} peer-focus:right-4 peer-focus:top-0 peer-focus:text-xs`}>
+                  {field.charAt(0).toUpperCase() + field.slice(1).replace(/Password/g, " Password")}
+                </label>
+              </div>
+            ))}
+            {passwordError && (
+              <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+            )}
+
+            <div className="flex justify-end space-x-4 mt-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                type="submit"
+                className="px-6 py-2 bg-[#11454A] text-white rounded-full text-base font-semibold shadow-md hover:bg-[#0e3d42] cursor-pointer"
+              >
+                Sign Up
+              </motion.button>
+            </div>
+
+            <div className="flex justify-end mt-2">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                type="button"
+                onClick={() => (window.location.href = "/signin")}
+                className="text-sm text-[#11454A] hover:underline cursor-pointer"
+              >
+                Already have an account?
+              </motion.button>
+            </div>
+          </form>
+
+          {message && (
+            <p className="text-center mt-4 text-[#11454A] font-medium">
+              {message}
+            </p>
+          )}
+        </motion.div>
+      </div>
     </div>
   );
 };

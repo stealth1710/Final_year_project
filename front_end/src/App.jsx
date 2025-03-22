@@ -9,6 +9,7 @@ import AdminScrapedPrices from "./pages/AdminScrapedPrices"; // ✅ Import Scrap
 import SignIn from "./pages/SignIn";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Cart from "./pages/Cart";
+import Awaiting from "./pages/Awaiting";
 
 const App = () => {
   return (
@@ -60,7 +61,7 @@ const App = () => {
           }
         />
 
-        {/* ✅ Admin Scraped Prices Route */}
+        {/*  Admin Scraped Prices Route */}
         <Route
           path="/admin/scraped-prices"
           element={
@@ -69,7 +70,9 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/Awaiting-Approval" element = {<Awaiting/>}>
 
+        </Route>
         {/* Not Found Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>

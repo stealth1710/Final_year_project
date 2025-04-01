@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +15,6 @@ const SignUp = () => {
   const [errorMessages, setErrorMessages] = useState([]);
   const [formError, setFormError] = useState(false);
 
-  // New state for individual field errors
   const [fieldErrors, setFieldErrors] = useState({
     name: false,
     email: false,
@@ -27,22 +26,20 @@ const SignUp = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Update form data
     setFormData({ ...formData, [name]: value });
 
-    // Clear overall errors if any
     if (errorMessages.length > 0 || fieldErrors[name]) {
       setErrorMessages([]);
       setFieldErrors({ ...fieldErrors, [name]: false });
       setFormError(false);
     }
   };
-  
+
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Recalculate field errors on submit
     const newFieldErrors = {
       name: formData.name.trim() === "",
       email: formData.email.trim() === "",
@@ -54,7 +51,6 @@ const SignUp = () => {
 
     setFieldErrors(newFieldErrors);
 
-    // Build an array of error messages based on current form data
     const errors = [];
     if (newFieldErrors.name) errors.push("Please enter your name.");
     if (newFieldErrors.email) errors.push("Please provide a valid email.");
@@ -78,6 +74,18 @@ const SignUp = () => {
       });
       const data = await response.json();
       setMessage(data.message);
+
+      //  Reset form fields after successful submission
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+      if (data.message === "Sign-up successful. Awaiting admin approval.") {
+        navigate("/Awaiting-Approval");
+      }
     } catch (error) {
       setMessage("Error signing up.");
     }
@@ -85,12 +93,13 @@ const SignUp = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#11454A] px-4">
-      <div className="flex w-full max-w-4xl items-center justify-between">
+      <div className="flex flex-col md:flex-row w-full max-w-6xl items-center justify-between gap-10">
+        {/* Brand / Logo */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-white text-4xl font-bold italic font-[Inter] flex space-x-0.5"
+          className="text-white text-4xl font-bold italic font-[Inter] flex space-x-0.5 mb-8 md:mb-0"
         >
           {"Retail Connect.".split("").map((char, index) => (
             <motion.span
@@ -104,13 +113,16 @@ const SignUp = () => {
           ))}
         </motion.div>
 
+        {/* Form */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-md shadow-lg rounded-xl p-8 bg-[#AEF3E6]"
+          className="w-full max-w-md shadow-lg rounded-xl p-4 sm:p-8 bg-[#AEF3E6]"
         >
-          <h1 className="text-3xl font-bold text-center text-[#11454A] mb-6">Sign Up</h1>
+          <h1 className="text-3xl font-bold text-center text-[#11454A] mb-6">
+            Sign Up
+          </h1>
 
           {errorMessages.length > 0 && (
             <motion.div
@@ -124,7 +136,7 @@ const SignUp = () => {
                 <motion.p
                   key={index}
                   initial={{ opacity: 0 }}
-                  animate={{ opacity:1 }}
+                  animate={{ opacity: 1 }}
                   transition={{ delay: index * 0.1 }}
                 >
                   {msg}
@@ -134,24 +146,37 @@ const SignUp = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {["name", "email", "password", "confirmPassword"].map((field, idx) => (
-              <div key={idx} className="relative">
-                <motion.input
-                  whileFocus={{ scale: 1.05 }}
-                  type={field.includes("password") ? "password" : "text"}
-                  name={field}
-                  value={formData[field]}
-                  onChange={handleChange}
-                  placeholder=" "
-                  className={`w-full px-4 py-3 border border-gray-300 rounded-md ${fieldErrors[field] && formError ? "bg-red-500" : "bg-[#11454A]"} text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-[#11454A] peer`}
-                />
-                <label className={`absolute transition-all duration-300 ease-in-out text-white ${
-  formData[field] ? 'right-4 top-0 text-xs' : 'left-4 top-3 text-base'
-} peer-focus:right-4 peer-focus:top-0 peer-focus:text-xs`}>
-                  {field.charAt(0).toUpperCase() + field.slice(1).replace(/Password/g, " Password")}
-                </label>
-              </div>
-            ))}
+            {["name", "email", "password", "confirmPassword"].map(
+              (field, idx) => (
+                <div key={idx} className="relative">
+                  <motion.input
+                    whileFocus={{ scale: 1.05 }}
+                    type={field.includes("password") ? "password" : "text"}
+                    name={field}
+                    value={formData[field]}
+                    onChange={handleChange}
+                    placeholder=" "
+                    className={`w-full px-4 py-3 border border-gray-300 rounded-md ${
+                      fieldErrors[field] && formError
+                        ? "bg-red-500"
+                        : "bg-[#11454A]"
+                    } text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-[#11454A] peer`}
+                  />
+                  <label
+                    className={`absolute transition-all duration-300 ease-in-out text-white ${
+                      formData[field]
+                        ? "right-4 top-0 text-xs"
+                        : "left-4 top-3 text-base"
+                    } peer-focus:right-4 peer-focus:top-0 peer-focus:text-xs`}
+                  >
+                    {field
+                      .charAt(0)
+                      .toUpperCase()
+                      .concat(field.slice(1).replace(/Password/g, " Password"))}
+                  </label>
+                </div>
+              )
+            )}
             {passwordError && (
               <p className="text-red-500 text-sm mt-1">{passwordError}</p>
             )}

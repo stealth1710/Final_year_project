@@ -7,7 +7,7 @@ const User = require("../models/User");
 const router = express.Router();
 
 /**
- * ✅ User Places an Order (Only Approved Users)
+ * User Places an Order (Only Approved Users)
  * @route POST /api/orders/place-order
  * @access Protected (Only logged-in & approved users)
  */
@@ -16,24 +16,24 @@ router.post("/place-order", auth, async (req, res) => {
     const { products, totalPrice } = req.body;
     const userId = req.user.id; // Extracted from JWT
 
-    // ✅ Validate if cart has products
+    //  Validate if cart has products
     if (!products || !Array.isArray(products) || products.length === 0) {
       return res.status(400).json({ message: "Cart is empty. Please add products before ordering." });
     }
 
-    // ✅ Validate totalPrice
+    //  Validate totalPrice
     if (!totalPrice || isNaN(totalPrice) || totalPrice <= 0) {
       return res.status(400).json({ message: "Invalid total price." });
     }
 
-    // ✅ Ensure each product has productId and quantity
+    //  Ensure each product has productId and quantity
     for (let product of products) {
       if (!product.productId || !product.quantity || product.quantity <= 0) {
         return res.status(400).json({ message: "Each product must have a valid productId and quantity." });
       }
     }
 
-    // ✅ Check if user exists and is approved
+    //  Check if user exists and is approved
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
@@ -42,7 +42,7 @@ router.post("/place-order", auth, async (req, res) => {
       return res.status(403).json({ message: "Your account is pending admin approval." });
     }
 
-    // ✅ Create new order
+    //  Create new order
     const newOrder = new Order({
       user: userId,
       products,
@@ -55,13 +55,13 @@ router.post("/place-order", auth, async (req, res) => {
     return res.status(201).json({ message: "Order placed successfully!", order: newOrder });
 
   } catch (error) {
-    console.error("🚨 Error placing order:", error);
+    console.error(" Error placing order:", error);
     return res.status(500).json({ message: "Server error while placing order.", error: error.message });
   }
 });
 
 /**
- * ✅ Admin Views All Orders
+ *  Admin Views All Orders
  * @route GET /api/orders/admin/orders
  * @access Admin Only
  */
@@ -83,7 +83,7 @@ router.get("/admin/orders", adminAuth, async (req, res) => {
 });
 
 /**
- * ✅ Admin Updates Order Status
+ *  Admin Updates Order Status
  * @route PUT /api/orders/admin/update-order/:id
  * @access Admin Only
  */
@@ -110,7 +110,7 @@ router.put("/admin/update-order/:id", adminAuth, async (req, res) => {
     return res.status(200).json({ message: "Order status updated successfully.", order: updatedOrder });
 
   } catch (error) {
-    console.error("🚨 Error updating order status:", error);
+    console.error(" Error updating order status:", error);
     return res.status(500).json({ message: "Server error while updating order status.", error: error.message });
   }
 });

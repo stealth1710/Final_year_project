@@ -23,5 +23,9 @@ router.put("/approve-user/:id", async (req, res) => {
     res.status(500).json({ error: "Error approving user." });
   }
 });
+router.delete('/reject-user/:id', async (req, res) => {
+  await User.findByIdAndDelete(req.params.id);
+  res.status(200).json({ message: 'User rejected and deleted' });
+})
 
 module.exports = router;

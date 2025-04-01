@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 const Cart = () => {
   const navigate = useNavigate();
-  const userId = localStorage.getItem("userId"); // Ensure unique cart per user
+  const userId = localStorage.getItem("userId");
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [placingOrder, setPlacingOrder] = useState(false);
   const [error, setError] = useState("");
-   //Base URL
-   const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    // Load cart from localStorage for the specific user
     const savedCart = JSON.parse(localStorage.getItem(`cart_${userId}`)) || [];
     setCart(savedCart);
     setLoading(false);
   }, [userId]);
 
-  // Update the quantity of a product
   const updateQuantity = (productId, quantity) => {
     if (quantity < 1) return;
     const updatedCart = cart.map((item) =>
@@ -28,19 +27,16 @@ const Cart = () => {
     localStorage.setItem(`cart_${userId}`, JSON.stringify(updatedCart));
   };
 
-  // Remove product from cart
   const removeFromCart = (productId) => {
     const updatedCart = cart.filter((item) => item._id !== productId);
     setCart(updatedCart);
     localStorage.setItem(`cart_${userId}`, JSON.stringify(updatedCart));
   };
 
-  // Calculate total price (Ensure correct floating point arithmetic)
   const totalAmount = parseFloat(
     cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)
   );
 
-  // Handle order placement
   const placeOrder = async () => {
     if (cart.length === 0) {
       setError("Your cart is empty.");
@@ -50,9 +46,8 @@ const Cart = () => {
     setPlacingOrder(true);
     setError("");
 
-    // Format products for backend
     const formattedCart = cart.map((item) => ({
-      productId: item._id, // Ensure product ID is sent correctly
+      productId: item._id,
       quantity: item.quantity,
     }));
 
@@ -66,7 +61,7 @@ const Cart = () => {
         },
         body: JSON.stringify({
           products: formattedCart,
-          totalPrice: totalAmount, // Ensure it's a number
+          totalPrice: totalAmount,
         }),
       });
 
@@ -74,9 +69,9 @@ const Cart = () => {
 
       if (response.ok) {
         alert("Order placed successfully!");
-        localStorage.removeItem(`cart_${userId}`); // Clear cart after placing order
+        localStorage.removeItem(`cart_${userId}`);
         setCart([]);
-        navigate("/"); // Redirect to home
+        navigate("/");
       } else {
         setError(data.message || "Failed to place order.");
       }
@@ -92,54 +87,77 @@ const Cart = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold text-center mb-4">Your Cart</h1>
+    <>
+      {/* Navbar */}
+<nav className="bg-[#11454A] text-white p-4 sticky top-0 shadow-md z-50">
+  <div className="flex items-center justify-between">
+    {/* Back Button */}
+    <button
+      onClick={() => navigate("/")}
+      className="flex items-center gap-2 text-white hover:text-gray-300"
+    >
+      <FaArrowLeft /> <h1 className="text-sm sm:text-base font-bold italic  sm:block" style={{ fontFamily: "Poppins, sans-serif" }}>Home</h1>
+    </button>
 
-      {cart.length === 0 ? (
-        <p className="text-center">Your cart is empty.</p>
-      ) : (
-        <div className="space-y-4">
-          {cart.map((item) => (
-            <div key={item._id} className="flex justify-between items-center border p-4 rounded-md shadow-md">
-              <div>
-                <h2 className="text-lg font-bold">{item.name}</h2>
-                <p>SAR {item.price.toFixed(2)}</p>
+    {/* Centered Title */}
+    <h1 className="text-xl sm:text-2xl font-bold italic font-[Poppins] text-center flex-1" style={{ fontFamily: "Poppins, sans-serif" }}>
+      Retail Connect
+    </h1>
+
+    {/* Cart Label on Right */}
+    <h1 className="text-sm sm:text-base font-bold italic  sm:block" style={{ fontFamily: "Poppins, sans-serif" }}>
+      Cart
+    </h1>
+  </div>
+</nav>
+
+      <div className="container mx-auto p-4">
+        
+
+        {cart.length === 0 ? (
+          <p className="text-center">Your cart is empty.</p>
+        ) : (
+          <div className="space-y-4">
+            {cart.map((item) => (
+              <div key={item._id} className="flex justify-between items-center border p-4 rounded-md shadow-md">
+                <div>
+                  <h2 className="text-lg font-bold">{item.name}</h2>
+                  <p>SAR {item.price.toFixed(2)}</p>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="number"
+                    value={item.quantity}
+                    min="1"
+                    onChange={(e) => updateQuantity(item._id, parseInt(e.target.value))}
+                    className="border px-2 py-1 w-16 text-center rounded"
+                  />
+                  <button
+                    onClick={() => removeFromCart(item._id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center space-x-4">
-                <input
-                  type="number"
-                  value={item.quantity}
-                  min="1"
-                  onChange={(e) => updateQuantity(item._id, parseInt(e.target.value))}
-                  className="border px-2 py-1 w-16 text-center rounded"
-                />
-                <button
-                  onClick={() => removeFromCart(item._id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded"
-                >
-                  Remove
-                </button>
-              </div>
+            ))}
+
+            <div className="text-right text-xl font-bold">
+              Total: SAR {totalAmount}
             </div>
-          ))}
 
-          {/* Total Price */}
-          <div className="text-right text-xl font-bold">
-            Total: SAR {totalAmount}
+            {error && <p className="text-red-500 text-center">{error}</p>}
+            <button
+              onClick={placeOrder}
+              disabled={placingOrder}
+              className="w-full bg-green-600 text-white py-2 rounded-md mt-4 hover:bg-green-700 disabled:bg-gray-400"
+            >
+              {placingOrder ? "Placing Order..." : "Place Order"}
+            </button>
           </div>
-
-          {/* Place Order Button */}
-          {error && <p className="text-red-500 text-center">{error}</p>}
-          <button
-            onClick={placeOrder}
-            disabled={placingOrder}
-            className="w-full bg-green-600 text-white py-2 rounded-md mt-4 hover:bg-green-700 disabled:bg-gray-400"
-          >
-            {placingOrder ? "Placing Order..." : "Place Order"}
-          </button>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 };
 

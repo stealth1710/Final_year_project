@@ -8,7 +8,6 @@ const AdminScrapedPrices = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Load API URL from .env
   const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -17,10 +16,9 @@ const AdminScrapedPrices = () => {
         const token = localStorage.getItem("token");
         const isAdmin = localStorage.getItem("isAdmin");
 
-        // Ensure only admin can access
-        if (!token || isAdmin !== "true") {
+        if (!isAdmin || isAdmin !== "true") {
           setError("Unauthorized access. Admins only.");
-          navigate("/"); // Redirect to homepage
+          navigate("/");
           return;
         }
 
@@ -33,9 +31,7 @@ const AdminScrapedPrices = () => {
           },
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch scraped prices");
-        }
+        if (!response.ok) throw new Error("Failed to fetch scraped prices");
 
         const data = await response.json();
         setScrapedPrices(data);
@@ -48,41 +44,69 @@ const AdminScrapedPrices = () => {
 
     fetchScrapedPrices();
   }, [navigate, API_BASE_URL]);
+
   return (
     <>
       <AdminNavbar />
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold text-center mb-4">Scraped Prices</h1>
 
-        {loading ? (
-          <p className="text-center">Loading scraped prices...</p>
-        ) : error ? (
+      {/* Home Button */}
+      <div className="w-full flex justify-start px-4 mt-4">
+        <button
+          onClick={() => navigate("/admin")}
+          className="bg-[#3B080F] text-white px-4 py-2 rounded-md font-semibold hover:bg-[#0e3d42] transition"
+        >
+          Home
+        </button>
+      </div>
+
+      <div className="container mx-auto px-4 py-6">
+        <h1 className="text-2xl sm:text-3xl font-bold italic text-center mb-6">
+          Real-Time Prices
+        </h1>
+
+        {error ? (
           <p className="text-center text-red-500">{error}</p>
+        ) : loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={index}
+                className="animate-pulse border border-gray-300 rounded-lg p-4 shadow bg-white"
+              >
+                <div className="h-4 bg-gray-300 rounded w-10 mb-3" />
+                <div className="h-5 bg-gray-300 rounded w-3/4 mb-4" />
+                <div className="h-4 bg-gray-300 rounded w-full mb-2" />
+                <div className="h-4 bg-gray-300 rounded w-2/3 mb-2" />
+                <div className="h-4 bg-gray-300 rounded w-1/2" />
+              </div>
+            ))}
+          </div>
         ) : scrapedPrices.length === 0 ? (
           <p className="text-center">No scraped prices found.</p>
         ) : (
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border p-2"></th>
-                <th className="border p-2">Product Name</th>
-                <th className="border p-2">Source</th>
-                <th className="border p-2">Price</th>
-                <th className="border p-2">Updated At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {scrapedPrices.map((item,index) => (
-                <tr key={item._id} className="text-center">
-                    <td className="border p-2">{index + 1}</td>
-                  <td className="border p-2">{item.product_name}</td>
-                  <td className="border p-2">{item.source}</td>
-                  <td className="border p-2">{item.price}</td>
-                  <td className="border p-2">{item.updated_at}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {scrapedPrices.map((item, index) => (
+              <div
+                key={item._id}
+                className="border border-gray-300 rounded-lg p-4 shadow-md bg-white hover:shadow-lg transition"
+              >
+                <div className="text-xs text-gray-500 mb-1">{index + 1}</div>
+                <h3 className="text-lg font-semibold text-[#11454A] mb-2">
+                  {item.product_name}
+                </h3>
+                <p className="text-sm mb-1">
+                  <span className="font-medium">Source :</span> {item.source}
+                </p>
+                <p className="text-sm mb-1">
+                  <span className="font-medium">Price :</span> {item.price}
+                </p>
+                <p className="text-sm">
+                  <span className="font-medium">Updated :</span>{" "}
+                  {item.updated_at}
+                </p>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </>

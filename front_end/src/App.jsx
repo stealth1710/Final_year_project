@@ -10,6 +10,8 @@ import SignIn from "./pages/SignIn";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Cart from "./pages/Cart";
 import Awaiting from "./pages/Awaiting";
+import UserApprovals from "./pages/UserApprovals";
+import PriceUpdate from "./pages/PriceUpdate";
 
 const App = () => {
   return (
@@ -69,10 +71,28 @@ const App = () => {
               <AdminScrapedPrices />
             </ProtectedRoute>
           }
+          
         />
-        <Route path="/Awaiting-Approval" element = {<Awaiting/>}>
-
-        </Route>
+        <Route
+          path="/admin/user-approvals"
+          element={
+            <ProtectedRoute isAdminRoute={true}>
+              < UserApprovals/>
+            </ProtectedRoute>
+          }
+          
+        />
+        <Route
+          path="/admin/price-update"
+          element={
+            <ProtectedRoute isAdminRoute={true}>
+              < PriceUpdate/>
+            </ProtectedRoute>
+          }
+          
+        />
+        
+        <Route path="/Awaiting-Approval" element={<Awaiting />}></Route>
         {/* Not Found Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>

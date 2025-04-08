@@ -102,7 +102,7 @@ const AdminScrapedPrices = () => {
                 key={item._id}
                 className="border border-gray-300 rounded-lg p-4 shadow-md bg-white hover:shadow-lg transition"
               >
-                <div className="text-xs text-gray-500 mb-1">{index + 1}</div>
+              
                 <h3 className="text-lg font-semibold text-[#11454A] mb-2">
                   {item.product_name}
                 </h3>

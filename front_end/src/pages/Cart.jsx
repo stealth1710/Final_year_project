@@ -71,7 +71,7 @@ const Cart = () => {
         alert("Order placed successfully!");
         localStorage.removeItem(`cart_${userId}`);
         setCart([]);
-        navigate("/");
+        navigate("/home");
       } else {
         setError(data.message || "Failed to place order.");
       }
@@ -93,7 +93,7 @@ const Cart = () => {
   <div className="flex items-center justify-between">
     {/* Back Button */}
     <button
-      onClick={() => navigate("/")}
+      onClick={() => navigate("/home")}
       className="flex items-center gap-2 text-white hover:text-gray-300"
     >
       <FaArrowLeft /> <h1 className="text-sm sm:text-base font-bold italic  sm:block" style={{ fontFamily: "Poppins, sans-serif" }}>Home</h1>

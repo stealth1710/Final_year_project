@@ -2,17 +2,34 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminNavbar from "../components/AdminNavbar";
 
+const SkeletonLoader = () => (
+  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border p-4 rounded-md shadow-md bg-gray-200 animate-pulse">
+    <div className="w-1/2 sm:w-1/4 h-4 bg-gray-300 mb-2 sm:mb-0"></div>
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+      <div className="w-1/4 h-8 bg-gray-300 rounded"></div>
+      <div className="w-1/4 h-8 bg-gray-300 rounded"></div>
+    </div>
+  </div>
+);
+
 const PriceUpdate = () => {
   const [products, setProducts] = useState([]);
   const [updatedPrices, setUpdatedPrices] = useState({});
+  const [loading, setLoading] = useState(true);
   const API_BASE_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await fetch(`${API_BASE_URL}/products`);
-      const data = await response.json();
-      setProducts(data);
+      try {
+        const response = await fetch(`${API_BASE_URL}/products`);
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProducts();
@@ -61,11 +78,18 @@ const PriceUpdate = () => {
       </div>
 
       <div className="container mx-auto px-4 py-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 italic">
           Product Price Update
         </h2>
 
-        {products.length === 0 ? (
+        {loading ? (
+          // Show skeleton loaders while loading
+          <div className="space-y-4">
+            {[...Array(5)].map((_, index) => (
+              <SkeletonLoader key={index} />
+            ))}
+          </div>
+        ) : products.length === 0 ? (
           <p className="text-center text-gray-500">No products found.</p>
         ) : (
           <div className="space-y-4">

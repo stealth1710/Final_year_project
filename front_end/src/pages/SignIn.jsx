@@ -44,7 +44,7 @@ const SignIn = () => {
       if (response.ok) {
         localStorage.setItem("token", data.token);
         localStorage.removeItem("isAdmin");
-        navigate("/");
+        navigate("/home");
       } else {
         setError(data.message || "Sign-in failed");
       }

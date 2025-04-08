@@ -514,6 +514,10 @@ def scrape_website(driver, query, target_names, website):
 if __name__ == "__main__":
     # Set up Selenium WebDriver (Single session for efficiency)
     driver = webdriver.Edge()  # Ensure Edge WebDriver is installed and in PATH
+    #deleting the old results before new scrape
+    deleted = collection.delete_many({})
+    print(f"🗑️ Deleted {deleted.deleted_count} old entries from MongoDB")
+
 
     for website in WEBSITES:  # Loop through each website
         for product in queries:  # Loop through each product query

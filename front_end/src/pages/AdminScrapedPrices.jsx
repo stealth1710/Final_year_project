@@ -45,6 +45,18 @@ const AdminScrapedPrices = () => {
     fetchScrapedPrices();
   }, [navigate, API_BASE_URL]);
 
+  const groupByProductName = (data) => {
+    const grouped = {};
+    data.forEach((item) => {
+      const name = item.product_name;
+      if (!grouped[name]) {
+        grouped[name] = [];
+      }
+      grouped[name].push(item);
+    });
+    return grouped;
+  };
+
   return (
     <>
       <AdminNavbar />

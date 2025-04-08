@@ -112,6 +112,7 @@ const AdminOrders = () => {
                     className={`${
                       order.status === "Pending"
                         ? "text-yellow-500"
+                        //future uses
                         : order.status === "Shipped"
                         ? "text-blue-500"
                         : order.status === "Delivered"

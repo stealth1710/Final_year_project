@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion"; // Import Framer Motion
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import SignUp from "./pages/SignUp";
@@ -14,28 +13,12 @@ import Awaiting from "./pages/Awaiting";
 import UserApprovals from "./pages/UserApprovals";
 import PriceUpdate from "./pages/PriceUpdate";
 
-const PageTransition = ({ children }) => {
-  const location = useLocation();
 
-  return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        initial={{ opacity: 1 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0.5 }}
-        transition={{ duration: 0.2 }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
-  );
-};
 
 const App = () => {
   return (
     <Router>
-      <PageTransition>
+      
         <Routes>
           {/* Home route, protected for logged-in users */}
           <Route
@@ -127,7 +110,7 @@ const App = () => {
           {/* Not Found Route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </PageTransition>
+      
     </Router>
   );
 };
